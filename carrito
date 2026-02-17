@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Carrito de compras</title>
+
+        <style>
+            body {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                font-family: Arial, Helvetica, sans-serif;
+                margin: 0;
+                padding: 20px;
+            }
+
+            .container {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+                max-width: 1200px;
+                margin: auto;
+            }
+
+            .card {
+                background: white;
+                border-radius: 16px;
+                padding: 20px;
+                text-align: center;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+            }
+
+            .card img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
+                border-radius: 12px;
+                margin-bottom: 15px;
+            }
+
+            .title {
+                font-size: 20px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .price {
+                font-size: 18px;
+                color: #764ba2;
+                margin: 10px 0;
+                font-weight: bold;
+            }
+
+            .controls {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 15px;
+                margin: 15px 0;
+            }
+
+            .carrito-card{
+    width: 200px;
+    height: 200px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    position: fixed;
+    bottom: 0%;
+    right: 0%;
+}
+.modal{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content{
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+button{
+    margin: 10px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-si{
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-no{
+    background-color: #dc3545;
+    color: white;
+}
+.carrito-card:hover{
+    transform: scale(1.05);
+}
+            button {
+                background: #667eea;
+                color: white;
+                border: none;
+                padding: 8px 14px;
+                font-size: 18px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background: #5566d8;
+            }
+
+            .quantity {
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .total {
+                background: #f3f3f3;
+                padding: 10px;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+
+    <body>
+
+    <div class="container" id="products"></div>
+
+    <script>
+        const products = [
+            { name: "aretes", price: 10000, image: " aretes.jpg" },
+            { name: "collares", price: 45000, image: "collares.jpg" },
+            { name: "manillas", price: 18000, image: "manillas.webp" },
+            { name: "rubor", price: 9000, image: "rubor.jpg" },
+            { name: "marcadores", price: 120000, image: "marcadores.jpg" },
+            { name: "labial", price: 30000, image: "labial.jpg" },
+            { name: "sombras", price: 7000, image: "sombras.webp" },
+            { name: "difumino", price: 15000, image: "difumino.jpg" },
+            { name: "bitacoras", price: 6000, image: "bitacoreas.webp" },
+            { name: "tinta china", price: 14000, image: "tinta china.jpg" },
+            { name: "lapices", price: 8000, image: "lapices.jpg" },
+            { name: "vinilos", price: 5500, image: "vinilos.png" },
+            { name: "pinceles", price: 4000, image: "pinceles.webp" },
+            { name: "borradores", price: 1000, image: "borradores.jpg" },
+            { name: "delineador", price: 5000, image: "delineador.webp" }
+        ];
+
+        const container = document.getElementById("products");
+        const quantities = Array(products.length).fill(0);
+
+        products.forEach((product, i) => {
+            container.innerHTML += `
+                <div class="card">
+                    <img src="${product.image}" alt="${product.name}">
+                    <div class="title">${product.name}</div>
+                    <div class="price">$${product.price}</div>
+
+                    <div class="controls">
+                        <button onclick="decrease(${i})">-</button>
+                        <div class="quantity" id="quantity-${i}">0</div>
+                        <button onclick="increase(${i})">+</button>
+                    </div>
+
+                    <div class="total">
+                        Total: $<span id="total-${i}">0</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        function increase(i) {
+            quantities[i]++;
+            update(i);
+        }
+
+        function decrease(i) {
+            if (quantities[i] > 0) {
+                quantities[i]--;
+                update(i);
+            }
+        }
+
+        function update(i) {
+            document.getElementById(`quantity-${i}`).textContent = quantities[i];
+            document.getElementById(`total-${i}`).textContent =
+                quantities[i] * products[i].price;
+        }
+    </script>
+<div class="carrito-card" onclick="mostrarConfirmacion()">
+    🛒 COMPRAR  🛒  
+</div>
+
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <p>¿Estás seguro de realizar la compra?</p>
+        <button class="btn-si" onclick="confirmarCompra()">Sí</button>
+        <button class="btn-no" onclick="cerrarModal()">No</button>
+    </div>
+</div>
+
+<script>
+function mostrarConfirmacion(){
+    document.getElementById("modal").style.display = "flex";
+}
+
+function cerrarModal(){
+    document.getElementById("modal").style.display = "none";
+}
+
+function confirmarCompra(){
+    alert("Compra realizada con éxito 🎉");
+    cerrarModal();
+}
+</script>
+    </body>
+    </html>
